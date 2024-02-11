@@ -23,9 +23,10 @@ def get_db():
 
 app = FastAPI()
 
+#pagination injection in app
 add_pagination(app)
 
-
+#Get count api which will get the subject and all the top frequent words
 @app.get("/get_count")
 async def fetch_word_count(subject: str, number: int, db: Session = Depends(get_db)):
     result = get_words_count(subject, number)
@@ -33,11 +34,9 @@ async def fetch_word_count(subject: str, number: int, db: Session = Depends(get_
         return JSONResponse(status_code=422, content=result) 
     history = crud.create_history(db, subject=subject)
     crud.create_words(db, history.id, result)
-
     return {"subject": subject, "result": result}
 
 @app.get("/history", response_model=Page[schemas.PastResults])
 async def get_history(db: Session = Depends(get_db)):
-    # return crud.get_history(db)
     return paginate(db, crud.get_history(db))
 

@@ -7,6 +7,7 @@ def get_words_count(word, number):
     URL = f"https://en.wikipedia.org/wiki/{word_to_search}" 
     r = requests.get(URL) 
     
+    #Used beautifulsoup to webscrape wikipedia
     soup = BeautifulSoup(r.content, 'html5lib') 
 
     div_tag = soup.find('div', attrs = {'class':'mw-content-ltr mw-parser-output'})  
@@ -21,6 +22,8 @@ def get_words_count(word, number):
     result = dict()
     
     for para in paragraphs:
+
+        #All the replace below are used to remove garbage from string
         para = para.replace('"', "")
         para = para.replace('\n', " ")
         para = para.replace('  ', " ")
@@ -33,6 +36,7 @@ def get_words_count(word, number):
             else:
                 result[w] = 1
         
+        #This creates the dictionary with all the words and their count in descending count value
         result = {k: v for k, v in sorted(result.items(), key=lambda item: item[1], reverse=True)}
         count = 1
         return_dic = dict()
